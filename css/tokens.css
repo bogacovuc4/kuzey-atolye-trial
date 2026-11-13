@@ -1,0 +1,90 @@
+/* ==========================================================
+   Kuzey Atölye — Design Tokens
+   Source of truth: design-system/kuzey-atolye/MASTER.md
+   ========================================================== */
+:root {
+  /* Color — primitives */
+  --ink-900: #171717;
+  --ink-700: #404040;
+  --stone-600: #57534e;
+  --stone-400: #a8a29e;
+  --paper: #f7f5f1;
+  --paper-deep: #efebe4;
+  --white: #ffffff;
+  --line: #e5e1da;
+  --bronze-700: #a16207;
+  --bronze-800: #854d0e;
+  --bronze-300: #d9a54a;
+  --red-600: #dc2626;
+  --green-700: #15803d;
+
+  /* Color — semantic */
+  --color-bg: var(--paper);
+  --color-bg-alt: var(--paper-deep);
+  --color-surface: var(--white);
+  --color-fg: var(--ink-900);
+  --color-fg-secondary: var(--ink-700);
+  --color-muted: var(--stone-600);
+  --color-border: var(--line);
+  --color-accent: var(--bronze-700);
+  --color-accent-hover: var(--bronze-800);
+  --color-on-accent: var(--white);
+  --color-ring: var(--ink-900);
+  --color-error: var(--red-600);
+  --color-success: var(--green-700);
+
+  /* Dark section */
+  --dark-bg: var(--ink-900);
+  --dark-fg: #f5f3ef;
+  --dark-muted: #b8b2aa;
+  --dark-border: #2e2e2e;
+  --dark-accent: var(--bronze-300);
+
+  /* Typography */
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+  --text-3xl: clamp(2.25rem, 1.6rem + 2.8vw, 4rem);
+  --text-hero: clamp(3rem, 1.5rem + 5.4vw, 6.75rem);
+
+  --leading-tight: 1.02;
+  --leading-snug: 1.2;
+  --leading-body: 1.65;
+  --tracking-label: 0.14em;
+
+  /* Spacing (spacious scale) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --section-y: clamp(4.5rem, 3rem + 6vw, 9rem);
+
+  /* Layout */
+  --container: 1280px;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --header-h: 76px;
+
+  /* Shape */
+  --radius: 4px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 450ms;
+
+  --shadow-sm: 0 1px 2px rgb(23 23 23 / 0.06);
+  --shadow-md: 0 12px 32px -12px rgb(23 23 23 / 0.18);
+}
