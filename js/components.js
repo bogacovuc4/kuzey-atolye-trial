@@ -2,7 +2,16 @@
    Components — small pure functions that return HTML strings
    ========================================================== */
 (function () {
-  const D = window.SITE_DATA;
+  // Data is loaded asynchronously (js/data.js), so read it at render time.
+  const D = {
+    get categories() {
+      return window.SITE_DATA.categories;
+    },
+    get projects() {
+      return window.SITE_DATA.projects;
+    },
+    img: (id, w, h) => window.SITE_DATA.img(id, w, h),
+  };
   const Icon = window.Icon;
 
   const esc = (s) =>

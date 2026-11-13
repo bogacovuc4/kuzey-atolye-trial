@@ -1,12 +1,23 @@
 /* ==========================================================
    Main — renders components and wires up interactions
    ========================================================== */
-(function () {
-  const D = window.SITE_DATA;
+(async function () {
   const UI = window.UI;
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let D;
+  try {
+    D = await window.loadSiteData();
+  } catch (err) {
+    // e.g. opened via file:// — fetch is blocked. Show the static shell at least.
+    console.error("İçerik yüklenemedi. Siteyi `python server.py` ile açın.", err);
+    $$(".reveal").forEach((el) => el.classList.add("is-visible"));
+    window.hydrateIcons();
+    return;
+  }
+  console.info("İçerik kaynağı:", D.source === "api" ? "SQLite veritabanı (api/content)" : "statik JSON (data/content.json)");
 
   /* ---------- Reveal on scroll ---------- */
   const revealObserver =
@@ -312,7 +323,36 @@
     if (e.target.name === "kvkk" || e.target.tagName === "SELECT") validateField(e.target);
   });
 
-  form.addEventListener("submit", (e) => {
+  function setSubmitting(on) {
+    submitBtn.disabled = on;
+    submitBtn.classList.toggle("is-loading", on);
+    $(".btn__label", submitBtn).textContent = on ? "Gönderiliyor…" : "Talebi Gönder";
+  }
+
+  function showSuccess() {
+    form.reset();
+    $$("[aria-invalid]", form).forEach((el) => el.removeAttribute("aria-invalid"));
+    $$(".has-error", form).forEach((el) => el.classList.remove("has-error"));
+    success.hidden = false;
+    success.focus();
+  }
+
+  function showServerErrors(fields) {
+    let first = null;
+    Object.entries(fields).forEach(([name, msg]) => {
+      const el = form.elements[name];
+      const errEl = $('[data-error-for="' + name + '"]', form);
+      if (errEl) errEl.textContent = msg;
+      if (el && el.setAttribute) {
+        el.setAttribute("aria-invalid", "true");
+        el.closest(".field, .check")?.classList.add("has-error");
+        first = first || el;
+      }
+    });
+    if (first) first.focus();
+  }
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fields = Object.keys(validators).map((n) => form.elements[n]);
     const results = fields.map(validateField);
@@ -322,20 +362,47 @@
       return;
     }
 
-    submitBtn.disabled = true;
-    submitBtn.classList.add("is-loading");
-    $(".btn__label", submitBtn).textContent = "Gönderiliyor…";
+    const payload = {
+      name: form.elements.name.value,
+      email: form.elements.email.value,
+      phone: form.elements.phone.value,
+      type: form.elements.type.value,
+      budget: (form.querySelector('input[name="budget"]:checked') || {}).value || "belirsiz",
+      message: form.elements.message.value,
+      kvkk: form.elements.kvkk.checked,
+    };
 
-    // Demo: no backend is connected; simulate a network request.
-    setTimeout(() => {
-      submitBtn.classList.remove("is-loading");
-      submitBtn.disabled = false;
-      $(".btn__label", submitBtn).textContent = "Talebi Gönder";
-      form.reset();
-      $$("[aria-invalid]", form).forEach((el) => el.removeAttribute("aria-invalid"));
-      success.hidden = false;
-      success.focus?.();
-    }, 1200);
+    setSubmitting(true);
+    try {
+      if (D.source !== "api") {
+        // Static hosting (GitHub Pages): no backend to store the request.
+        await new Promise((r) => setTimeout(r, 900));
+        console.info("Statik modda talep kaydedilmez. Kaydetmek için siteyi `python server.py` ile çalıştırın.");
+        showSuccess();
+        return;
+      }
+
+      const res = await fetch("api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const body = await res.json().catch(() => ({}));
+
+      if (res.status === 422 && body.fields) {
+        showServerErrors(body.fields);
+      } else if (!res.ok) {
+        throw new Error(body.error || "HTTP " + res.status);
+      } else {
+        showSuccess();
+      }
+    } catch (err) {
+      console.error(err);
+      const errEl = $('[data-error-for="kvkk"]', form);
+      if (errEl) errEl.textContent = "Talebiniz gönderilemedi. Lütfen tekrar deneyin ya da merhaba@kuzeyatolye.com.tr adresine yazın.";
+    } finally {
+      setSubmitting(false);
+    }
   });
 
   form.addEventListener("input", () => {
