@@ -1,5 +1,7 @@
 # Kuzey Atölye
 
+**🔗 Canlı site: https://bogacovuc4.github.io/kuzey-atolye-trial/**
+
 Mimarlık ve iç mimarlık stüdyosu için tanıtım sitesi. Bağımlılığı olmayan statik HTML/CSS/JS.
 
 - `index.html` — sayfa iskeleti
