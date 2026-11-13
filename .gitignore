@@ -4,3 +4,6 @@ Thumbs.db
 db/*.db
 db/*.db-journal
 __pycache__/
+
+# Dokunuş Akademi ayrı repoda: github.com/bogacovuc4/dokunus-akademi
+dokunus-akademi/
